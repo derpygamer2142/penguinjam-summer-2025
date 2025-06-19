@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>background remover</title>
+</head>
+<body>
+    <canvas></canvas>
+
+    <input type="file" id="image">
+
+    <style>
+        body, html {
+            background-color: rgb(82, 82, 82);
+        }
+    </style>
+
+    <script>
+        const picker = document.getElementById("image")
+        const canvas = document.querySelector("canvas")
+        const ctx = canvas.getContext("2d")
+
+        picker.addEventListener("change", async (e) => {
+            const file = picker.files[0]
+            const img = document.createElement("img")
+            const url = URL.createObjectURL(file)
+            img.src = url
+            //sURL.revokeObjectURL(img)
+            document.body.appendChild(img)
+            img.onload = () => {
+                canvas.width = img.width
+                canvas.height = img.height
+
+                ctx.drawImage(img, 0, 0)
+                const data = ctx.getImageData(0, 0, img.width, img.height)
+
+                for (let i = 0; i < data.data.length; i += 4) {
+                    if (data.data[i] === 255 && data.data[i+1] === 255 && data.data[i+2] === 255 && data.data[i+3] === 255) {
+                        data.data.set([0,0,0,0], i)
+                    }
+                }
+
+                ctx.putImageData(data, 0, 0)
+
+                // from https://stackoverflow.com/a/15685544
+                var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"); 
+                window.location.href=image;
+            }
+        })
+    </script>
+</body>
+</html>

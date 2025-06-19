@@ -1,0 +1,1 @@
+the index.html file is a background remover. upload an image and it will remove all pixels with an rgba of 255,255,255,255
